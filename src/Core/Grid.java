@@ -20,7 +20,6 @@ public class Grid extends JPanel implements ActionListener {
 	int lastRow;
 	String etat;
 	String winner;
-	JButton[][] matrice;
 
 	Grid(int r, int c) {
 		//Definition
@@ -39,7 +38,6 @@ public class Grid extends JPanel implements ActionListener {
 		for (int i = 0; i < rows ; i++) {
 			for (int j = 0; j < cols ; j++) {
 				JButton button = new JButton();
-				matrice = new JButton[rows][cols];
 
 				//Premiere ligne qui sert juste a faire tomber les pieces
 				if (i < 1 && j < 7) {
@@ -62,7 +60,6 @@ public class Grid extends JPanel implements ActionListener {
 				Case ref = new Case(i, j, button);
 				// On lajoute dans une liste
 				listeCases.add(ref);
-				matrice[i][j] = button;
 			}
 		}
 
@@ -83,58 +80,316 @@ public class Grid extends JPanel implements ActionListener {
 
 	public boolean isThereAnyWinner() {
 		// TODO Auto-generated method stub
-		// Vertical bas droite vers gauche
-		for (int i = listeCases.size()-1; i>=0 ; i--) {
-			Case cross = listeCases.get(i);
-			if (cross.row > 0) {
-				//System.out.println("Boutton " + cross.row + " " + cross.col + " " + cross.button.isSelected());
-				if (cross.button.isSelected()) { //Check 1
-					String name = cross.button.getIcon().toString();
-					int s = i - 1;
-					if (s > 0) {
-						Case cross2 = listeCases.get(s);
-						String name2 = cross2.button.getIcon().toString();
-						if (cross2.button.isSelected() && name.contains("caserouge.png") && name2.contains("caserouge.png")) { //Check 2
-							//System.out.println("2 in a row RED");
-							s = i - 2;
-							if (s > 0) {
-								Case cross3 = listeCases.get(s);
-								String name3 = cross3.button.getIcon().toString();
-								if (cross3.button.isSelected() && name.contains("caserouge.png") && name2.contains("caserouge.png") && name3.contains("caserouge.png")) { //Check 3
-									//System.out.println("3 in a row RED");
-									s = i - 3;
-									if (s > 0) {
-										Case cross4 = listeCases.get(s);
-										String name4 = cross4.button.getIcon().toString();
-										if (cross4.button.isSelected() && name.contains("caserouge.png") && name2.contains("caserouge.png") && name3.contains("caserouge.png") && name4.contains("caserouge.png")) { //Check 4
-											//System.out.println("4 in a row RED");
-											winner = "Joueur 1";
-											return true;
-										}
-									}
-								}
-							}
+		// Vertical
+		int dec;
+		int b;
+		// Colonne 7
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 0;
+			b = 7;
+			if (listeCases.get(i - dec).button.isSelected() && listeCases.get(i - dec).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(i - b).button.isSelected() && listeCases.get(i - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(i - b).button.isSelected() && listeCases.get(i - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(i - b).button.isSelected() && listeCases.get(i - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
 						}
-						else if (cross2.button.isSelected() && name.contains("casejaune.png") && name2.contains("casejaune.png")) { //Check 2
-							//System.out.println("2 in a row YELLOW");
-							s = i - 2;
-							if (s > 0) {
-								Case cross3 = listeCases.get(s);
-								String name3 = cross3.button.getIcon().toString();
-								if (cross3.button.isSelected() && name.contains("casejaune.png") && name2.contains("casejaune.png") && name3.contains("casejaune.png")) { //Check 3
-									//System.out.println("3 in a row YELLOW");
-									s = i - 3;
-									if (s > 0) {
-										Case cross4 = listeCases.get(s);
-										String name4 = cross4.button.getIcon().toString();
-										if (cross4.button.isSelected() && name.contains("casejaune.png") && name2.contains("casejaune.png") && name3.contains("casejaune.png") && name4.contains("casejaune.png")) { //Check 4
-											//System.out.println("4 in a row RED");
-											winner = "Joueur 2";
-											return true;
-										}
-									}
-								}
-							}
+					}
+				}
+			}
+			else if (listeCases.get(i - dec).button.isSelected() && listeCases.get(i - dec).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(i - b).button.isSelected() && listeCases.get(i - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(i - b).button.isSelected() && listeCases.get(i - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(i - b).button.isSelected() && listeCases.get(i - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Fin
+		// Colonne 6
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 1;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		// Colonne 5
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 2;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		// Colonne 4
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 2;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Colonne 3
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 3;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Colonne 2
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 4;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Colonne 1
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 5;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Colonne 1
+		for (int i = listeCases.size()-1; i > 0; i -= 7) {
+			dec = 6;
+			int newi = i - dec;
+			b = 7;
+			if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(newi).button.isSelected() && listeCases.get(newi).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //2
+					b = 14;
+					if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //3
+						b = 21;
+						if (listeCases.get(newi - b).button.isSelected() && listeCases.get(newi - b).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		// Fin check vertical
+		// Check horizontal
+		for (int i = listeCases.size()-1; i>6; i--) {
+			if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(i).row == listeCases.get(i-1).row && listeCases.get(i-1).button.isSelected() && listeCases.get(i-1).button.getIcon().toString().contains("caserouge.png")) { //2
+					if (listeCases.get(i).row == listeCases.get(i-2).row && listeCases.get(i-2).button.isSelected() && listeCases.get(i-2).button.getIcon().toString().contains("caserouge.png"))	{ //3
+						if (listeCases.get(i).row == listeCases.get(i-3).row && listeCases.get(i-3).button.isSelected() && listeCases.get(i-3).button.getIcon().toString().contains("caserouge.png")) { //4
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(i).row == listeCases.get(i-1).row && listeCases.get(i-1).button.isSelected() && listeCases.get(i-1).button.getIcon().toString().contains("casejaune.png")) { //2
+					if (listeCases.get(i).row == listeCases.get(i-2).row && listeCases.get(i-2).button.isSelected() && listeCases.get(i-2).button.getIcon().toString().contains("casejaune.png"))	{ //3
+						if (listeCases.get(i).row == listeCases.get(i-3).row && listeCases.get(i-3).button.isSelected() && listeCases.get(i-3).button.getIcon().toString().contains("casejaune.png")) { //4
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Fin check honrizontal
+		//Check diagonal/ Pour chaque direction et chaque coordone check si les 3 elements qui suivent sont de la meme couleur
+		//Vers la gauche
+		for (int i = listeCases.size()-1; i>6; i--) {
+			if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(i-8).button.isSelected() && listeCases.get(i-8).button.getIcon().toString().contains("caserouge.png")) { //2
+					if (listeCases.get(i-16).button.isSelected() && listeCases.get(i-16).button.getIcon().toString().contains("caserouge.png")) { //3
+						if (listeCases.get(i-24).button.isSelected() && listeCases.get(i-24).button.getIcon().toString().contains("caserouge.png")) { //44
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(i-8).button.isSelected() && listeCases.get(i-8).button.getIcon().toString().contains("casejaune.png")) { //2
+					if (listeCases.get(i-16).button.isSelected() && listeCases.get(i-16).button.getIcon().toString().contains("casejaune.png")) { //3
+						if (listeCases.get(i-24).button.isSelected() && listeCases.get(i-24).button.getIcon().toString().contains("casejaune.png")) { //44
+							winner = "Joueur 2";
+							return true;
+						}
+					}
+				}
+			}
+		}
+		//Vers la droite
+		for (int i = listeCases.size()-1; i>6; i--) {
+			if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("caserouge.png")) { //1
+				if (listeCases.get(i-6).button.isSelected() && listeCases.get(i-6).button.getIcon().toString().contains("caserouge.png")) { //2
+					if (listeCases.get(i-12).button.isSelected() && listeCases.get(i-12).button.getIcon().toString().contains("caserouge.png")) { //3
+						if (listeCases.get(i-18).button.isSelected() && listeCases.get(i-18).button.getIcon().toString().contains("caserouge.png")) { //44
+							winner = "Joueur 1";
+							return true;
+						}
+					}
+				}
+			}
+			else if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("casejaune.png")) { //1
+				if (listeCases.get(i-6).button.isSelected() && listeCases.get(i-6).button.getIcon().toString().contains("casejaune.png")) { //2
+					if (listeCases.get(i-12).button.isSelected() && listeCases.get(i-12).button.getIcon().toString().contains("casejaune.png")) { //3
+						if (listeCases.get(i-18).button.isSelected() && listeCases.get(i-18).button.getIcon().toString().contains("casejaune.png")) { //44
+							winner = "Joueur 2";
+							return true;
 						}
 					}
 				}
