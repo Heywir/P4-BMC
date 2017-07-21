@@ -4,16 +4,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Objects;
 
 import javax.swing.*;
 
-public class Grid extends JPanel implements ActionListener {
+class Grid extends JPanel implements ActionListener {
 
-	int rows;
-	int cols;
-	ArrayList<Case> listeCases;
+	private final ArrayList<Case> listeCases;
 	String joueur;
 	boolean done = false;
 	int lastCol;
@@ -21,11 +18,11 @@ public class Grid extends JPanel implements ActionListener {
 	String etat;
 	String winner;
 
-	Grid(int r, int c) {
+	Grid() {
 		//Definition
-		rows = r;
-		cols = c;
-		listeCases = new ArrayList<Case>();
+		int rows = 7;
+		int cols = 7;
+		listeCases = new ArrayList<>();
 
 		//Layout
 		GridLayout layout = new GridLayout(rows, cols);
@@ -35,8 +32,8 @@ public class Grid extends JPanel implements ActionListener {
 
 		//Creation de la grid
 
-		for (int i = 0; i < rows ; i++) {
-			for (int j = 0; j < cols ; j++) {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
 				JButton button = new JButton();
 
 				//Premiere ligne qui sert juste a faire tomber les pieces
@@ -68,9 +65,7 @@ public class Grid extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		Iterator<Case> iterator = listeCases.iterator();
-		while (iterator.hasNext()) {
-			Case cross = iterator.next();
+		for (Case cross : listeCases) {
 			if (arg0.getSource() == cross.button) {
 				play(cross.col);
 			}
@@ -83,9 +78,9 @@ public class Grid extends JPanel implements ActionListener {
 		// Vertical
 		for (int i = listeCases.size()-1; i>6; i--) {
 			if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("caserouge.png")) { //1
-				if (listeCases.get(i).col == listeCases.get(i-7).col && listeCases.get(i-7).button.isSelected() && listeCases.get(i-7).button.getIcon().toString().contains("caserouge.png")) { //2
-					if (listeCases.get(i).col == listeCases.get(i-14).col && listeCases.get(i-14).button.isSelected() && listeCases.get(i-14).button.getIcon().toString().contains("caserouge.png"))	{ //3
-						if (listeCases.get(i).col == listeCases.get(i-21).col && listeCases.get(i-21).button.isSelected() && listeCases.get(i-21).button.getIcon().toString().contains("caserouge.png")) { //4
+				if (Objects.equals(listeCases.get(i).col, listeCases.get(i - 7).col) && listeCases.get(i-7).button.isSelected() && listeCases.get(i-7).button.getIcon().toString().contains("caserouge.png")) { //2
+					if (Objects.equals(listeCases.get(i).col, listeCases.get(i - 14).col) && listeCases.get(i-14).button.isSelected() && listeCases.get(i-14).button.getIcon().toString().contains("caserouge.png"))	{ //3
+						if (Objects.equals(listeCases.get(i).col, listeCases.get(i - 21).col) && listeCases.get(i-21).button.isSelected() && listeCases.get(i-21).button.getIcon().toString().contains("caserouge.png")) { //4
 							winner = "Joueur 1";
 							return true;
 						}
@@ -93,9 +88,9 @@ public class Grid extends JPanel implements ActionListener {
 				}
 			}
 			else if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("casejaune.png")) { //1
-				if (listeCases.get(i).col == listeCases.get(i-7).col && listeCases.get(i-7).button.isSelected() && listeCases.get(i-7).button.getIcon().toString().contains("casejaune.png")) { //2
-					if (listeCases.get(i).col == listeCases.get(i-14).col && listeCases.get(i-14).button.isSelected() && listeCases.get(i-14).button.getIcon().toString().contains("casejaune.png"))	{ //3
-						if (listeCases.get(i).col == listeCases.get(i-21).col && listeCases.get(i-21).button.isSelected() && listeCases.get(i-21).button.getIcon().toString().contains("casejaune.png")) { //4
+				if (Objects.equals(listeCases.get(i).col, listeCases.get(i - 7).col) && listeCases.get(i-7).button.isSelected() && listeCases.get(i-7).button.getIcon().toString().contains("casejaune.png")) { //2
+					if (Objects.equals(listeCases.get(i).col, listeCases.get(i - 14).col) && listeCases.get(i-14).button.isSelected() && listeCases.get(i-14).button.getIcon().toString().contains("casejaune.png"))	{ //3
+						if (Objects.equals(listeCases.get(i).col, listeCases.get(i - 21).col) && listeCases.get(i-21).button.isSelected() && listeCases.get(i-21).button.getIcon().toString().contains("casejaune.png")) { //4
 							winner = "Joueur 2";
 							return true;
 						}
@@ -107,9 +102,9 @@ public class Grid extends JPanel implements ActionListener {
 		// Check horizontal
 		for (int i = listeCases.size()-1; i>6; i--) {
 			if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("caserouge.png")) { //1
-				if (listeCases.get(i).row == listeCases.get(i-1).row && listeCases.get(i-1).button.isSelected() && listeCases.get(i-1).button.getIcon().toString().contains("caserouge.png")) { //2
-					if (listeCases.get(i).row == listeCases.get(i-2).row && listeCases.get(i-2).button.isSelected() && listeCases.get(i-2).button.getIcon().toString().contains("caserouge.png"))	{ //3
-						if (listeCases.get(i).row == listeCases.get(i-3).row && listeCases.get(i-3).button.isSelected() && listeCases.get(i-3).button.getIcon().toString().contains("caserouge.png")) { //4
+				if (Objects.equals(listeCases.get(i).row, listeCases.get(i - 1).row) && listeCases.get(i-1).button.isSelected() && listeCases.get(i-1).button.getIcon().toString().contains("caserouge.png")) { //2
+					if (Objects.equals(listeCases.get(i).row, listeCases.get(i - 2).row) && listeCases.get(i-2).button.isSelected() && listeCases.get(i-2).button.getIcon().toString().contains("caserouge.png"))	{ //3
+						if (Objects.equals(listeCases.get(i).row, listeCases.get(i - 3).row) && listeCases.get(i-3).button.isSelected() && listeCases.get(i-3).button.getIcon().toString().contains("caserouge.png")) { //4
 							winner = "Joueur 1";
 							return true;
 						}
@@ -117,9 +112,9 @@ public class Grid extends JPanel implements ActionListener {
 				}
 			}
 			else if (listeCases.get(i).button.isSelected() && listeCases.get(i).button.getIcon().toString().contains("casejaune.png")) { //1
-				if (listeCases.get(i).row == listeCases.get(i-1).row && listeCases.get(i-1).button.isSelected() && listeCases.get(i-1).button.getIcon().toString().contains("casejaune.png")) { //2
-					if (listeCases.get(i).row == listeCases.get(i-2).row && listeCases.get(i-2).button.isSelected() && listeCases.get(i-2).button.getIcon().toString().contains("casejaune.png"))	{ //3
-						if (listeCases.get(i).row == listeCases.get(i-3).row && listeCases.get(i-3).button.isSelected() && listeCases.get(i-3).button.getIcon().toString().contains("casejaune.png")) { //4
+				if (Objects.equals(listeCases.get(i).row, listeCases.get(i - 1).row) && listeCases.get(i-1).button.isSelected() && listeCases.get(i-1).button.getIcon().toString().contains("casejaune.png")) { //2
+					if (Objects.equals(listeCases.get(i).row, listeCases.get(i - 2).row) && listeCases.get(i-2).button.isSelected() && listeCases.get(i-2).button.getIcon().toString().contains("casejaune.png"))	{ //3
+						if (Objects.equals(listeCases.get(i).row, listeCases.get(i - 3).row) && listeCases.get(i-3).button.isSelected() && listeCases.get(i-3).button.getIcon().toString().contains("casejaune.png")) { //4
 							winner = "Joueur 2";
 							return true;
 						}
@@ -194,7 +189,7 @@ public class Grid extends JPanel implements ActionListener {
 		
 	}
 	
-	public void playerFillIt(int r, int c) {
+	private void playerFillIt(int r, int c) {
 		for (int i = listeCases.size()-1; i>=0 ; i--) {
 			Case cross = listeCases.get(i);
 			if (cross.col == c && cross.row == r){

@@ -7,28 +7,24 @@ import java.net.Socket;
 
 import javax.swing.text.BadLocationException;
 
-public class Server {
+class Server {
 	
-	ServerSocket ss;
-	Socket sc1;
-	Socket sc2;
-	ClientWorker cw;
-	ServerUI ui;
+	private ServerSocket ss;
 
-	public Server() throws BadLocationException {
+	private Server() throws BadLocationException {
 	
 		try {
 			
 			ss = new ServerSocket(9090, 10, InetAddress.getByName("127.0.0.1"));
-			ui = new ServerUI();
+			ServerUI ui = new ServerUI();
 			while (true) {	
 				ui.addText("Serveur: Attente de connexion");
-				sc1 = ss.accept();
+				Socket sc1 = ss.accept();
 				ui.addText("Serveur: Connexion du premier client: " + sc1.toString());
-				sc2 = ss.accept();
-				ui.addText("Serveur: Connexion du deuxième client: " + sc2.toString());
+				Socket sc2 = ss.accept();
+				ui.addText("Serveur: Connexion du deuxiï¿½me client: " + sc2.toString());
 				ui.addText("Serveur: Creation du Worker");
-				cw = new ClientWorker(sc1, sc2, ui);
+				ClientWorker cw = new ClientWorker(sc1, sc2, ui);
 				Thread t = new Thread(cw);
 				t.start();
 				

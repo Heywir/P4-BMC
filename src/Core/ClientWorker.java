@@ -10,26 +10,23 @@ import java.util.Scanner;
 
 import javax.swing.text.BadLocationException;
 
-public class ClientWorker implements Runnable {
+class ClientWorker implements Runnable {
 	
-	Socket sc1;
-	Socket sc2;
-	ServerUI ui;
-	int p1;
-	int p2;
+	private final Socket sc1;
+	private final Socket sc2;
+	private final ServerUI ui;
+	private int p1;
 	OutputStream wr1;
 	OutputStream wr2;
 	InputStream r1;
 	InputStream r2;
-	PrintWriter bf1;
-	PrintWriter bf2;
-	Scanner br1;
-	Scanner br2;
-	String joueurSC1;
-	String joueurSC2;
-	int lastRow;
-	int lastCol;
-	
+	private PrintWriter bf1;
+	private PrintWriter bf2;
+	private Scanner br1;
+	private Scanner br2;
+	private String joueurSC1;
+	private String joueurSC2;
+
 	public ClientWorker(Socket s1, Socket s2, ServerUI u) {
 		sc1 = s1;
 		sc2 = s2;
@@ -64,7 +61,7 @@ public class ClientWorker implements Runnable {
 		}
 	}
 	
-	public void open() throws IOException {
+	private void open() throws IOException {
 		// Writer
 		bf1 = new PrintWriter(sc1.getOutputStream(), true);
 		bf2 = new PrintWriter(sc2.getOutputStream(), true);
@@ -74,32 +71,23 @@ public class ClientWorker implements Runnable {
 		br2 = new Scanner(sc2.getInputStream());
 	}
 
-	private void randomizePlayers() throws BadLocationException, IOException {
+	private void randomizePlayers() throws BadLocationException {
 		// TODO Auto-generated method stub
 		ui.addText("Worker: Randomisation des joueurs");
 		Random random = new Random();
 		p1 = random.nextInt(2);
 		p1 = 1;
-		if (p1 == 0) {
-			p2 = 1;
-			joueurSC1 = "Joueur 1";
-			joueurSC2 = "Joueur 2";
-			ui.addText("Worker: Joueur 1: " + p1 + "  Joueur 2: " + p2);
-			sendToSC1("P1");
-			sendToSC2("P2");
-		}
-		else {
-			p2 = 0;
-			joueurSC1 = "Joueur 2";
-			joueurSC2 = "Joueur 1";
-			ui.addText("Worker: Joueur 1: " + p1 + "  Joueur 2: " + p2);
-			sendToSC1("P2");
-			sendToSC2("P1");
-		}
-		
+		int p2;
+		p2 = 0;
+		joueurSC1 = "Joueur 2";
+		joueurSC2 = "Joueur 1";
+		ui.addText("Worker: Joueur 1: " + p1 + "  Joueur 2: " + p2);
+		sendToSC1("P2");
+		sendToSC2("P1");
+
 	}
 	
-	public void sendToBoth(String message) throws IOException, BadLocationException {
+	private void sendToBoth(String message) throws BadLocationException {
 		ui.addText("Worker: Send to Socket 1: " + message);
 		ui.addText("Worker: Send to Socket 2: " + message);
 		bf1.println("COMMAND#" + message);
@@ -107,23 +95,23 @@ public class ClientWorker implements Runnable {
 		
 	}
 	
-	public void sendToSC1(String message) throws IOException, BadLocationException {
+	private void sendToSC1(String message) throws BadLocationException {
 		ui.addText("Worker: Send to Socket 1: " + message);
 		bf1.println("COMMAND#" + message);
 		
 	}
 	
-	public void sendToSC2(String message) throws IOException, BadLocationException {
+	private void sendToSC2(String message) throws BadLocationException {
 		ui.addText("Worker: Send to Socket 2: " + message);
 		bf2.println("COMMAND#" + message);
 		
 	}
 	
-	public void startListening(String index) throws IOException, BadLocationException {
+	private void startListening(String index) throws BadLocationException {
 		if (index.equals("ready")) {
 			//Ecoute pour savoir si pret
-			String reponse1 = null;
-			String reponse2 = null;
+			String reponse1;
+			String reponse2;
 			reponse1 = br1.nextLine();
 			ui.addText("Worker: Received from Socket 1: " + reponse1);
 			reponse2 = br2.nextLine();
@@ -135,6 +123,8 @@ public class ClientWorker implements Runnable {
 		else if (index.equals("done")) {
 			int tour = 1;
 			while (tour <= 42) {
+				int lastCol;
+				int lastRow;
 				if (joueurSC1.equals("Joueur 1")) {
 					String reponse1;
 					if (br1.hasNextLine()) {
@@ -179,7 +169,7 @@ public class ClientWorker implements Runnable {
 		}
 	}
 	
-	public void play() throws IOException, BadLocationException {
+	private void play() throws BadLocationException {
 		if (p1 == 0) {
 			sendToSC1("PLAY");
 			sendToSC2("WAIT");
@@ -190,7 +180,7 @@ public class ClientWorker implements Runnable {
 		}
 	}
 	
-	public void stop() throws IOException {
+	public void stop() {
 		bf1.close();
 		bf2.close();
 		br1.close();

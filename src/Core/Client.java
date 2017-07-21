@@ -6,44 +6,32 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
-public class Client extends JFrame implements Runnable {
+class Client extends JFrame implements Runnable {
 	
-	Socket client;
-	JFrame mainWindow;
-	JPanel mainPanel;
-	JPanel gridPanel;
-	JLabel statusCO;
-	Scanner reader;
-	PrintWriter writer;
-	String reponse;
-	Grid grid;
-	Boolean done = false;
-	String joueur;
-	String etat;
-	int lastRow;
-	int lastCol;
-	
-	Client() {
+	private Socket client;
+	private final JPanel mainPanel;
+	private final JLabel statusCO;
+	private Scanner reader;
+	private PrintWriter writer;
+	private Grid grid;
+	private String joueur;
+	private String etat;
+
+	private Client() {
 		
 		// Composants
-		mainWindow = new JFrame("Client");
+		JFrame mainWindow = new JFrame("Client");
 		mainPanel = new JPanel();
 		statusCO = new JLabel("Status", SwingConstants.CENTER);
 		
 		// Parametres
 		mainWindow.setResizable(false);
 		mainWindow.setSize(735, 760);
-		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		statusCO.setText("En attente de Connexion");
 		
 		// Layout
@@ -79,10 +67,9 @@ public class Client extends JFrame implements Runnable {
 			
 			System.out.println("Fin de code");
 
+			close();
+
 			
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -90,7 +77,7 @@ public class Client extends JFrame implements Runnable {
 	
 	}
 	
-	public void open() throws IOException {
+	private void open() throws IOException {
 		// Writer
 		writer = new PrintWriter(client.getOutputStream(), true);
 		// Reader
@@ -98,114 +85,110 @@ public class Client extends JFrame implements Runnable {
 	}
 	
 	
-	public void close() {
+	private void close() {
 		writer.close();
 		reader.close();
 	}
 	
-	public void startListening(String index) throws IOException {
-		reponse = null;
-		if (index.equals("player")) {
-			//On attend de savoir qui on est
-			while (true) {
-				if (reader.hasNextLine()) {
-					reponse = reader.nextLine();
-					System.out.println(reponse);
-					if (reponse.equals("COMMAND#P1")) {
-						statusCO.setForeground(Color.RED);
-						joueur = "Joueur 1";
-						statusCO.setText(joueur);
-						break;
-					}
-					else if (reponse.equals("COMMAND#P2")){
-						statusCO.setForeground(Color.ORANGE);
-						joueur = "Joueur 2";
-						statusCO.setText(joueur);
-						break;
-					}
-				}
-			}
-		}
-		else if (index.equals("start")) {
-			while (true) {
-				if (reader.hasNextLine()) {
-					reponse = reader.nextLine();
-					System.out.println(reponse);
-					if (reponse.equals("COMMAND#START")) {
-						System.out.println("Start partie");
-						grid = new Grid(7,7);
-						grid.joueur = joueur;
-						mainPanel.add(grid, BorderLayout.CENTER);
-						mainPanel.revalidate();
-						break;
-					}
-				}
-			}
-		}
-		else if (index.equals("game")) {
-			
-			if (joueur.equals("Joueur 1")) {
-				etat = "PLAYING";
-				grid.etat = etat;
-				statusCO.setText(joueur + " " + etat);
-			}
-			else if (joueur.equals("Joueur 2")) {
-				etat = "WAITING";
-				grid.etat = etat;
-				statusCO.setText(joueur + " " + etat);
-			}
-
-			Thread t = new Thread(this);
-			t.start();
-
-			
-		}
-		else if (index.equals("check")) {
-			while (true) {
-				if (reader.hasNextLine()) {
-					String reponse = reader.nextLine();
-					if (reponse.contains("COMMAND#PLAYED")) {
-						String split2[] = reponse.split(";");
-						lastRow = Integer.parseInt(split2[2]);
-						lastCol = Integer.parseInt(split2[1]);
-						System.out.println("Le joueur a joue: " + lastRow + " " + lastCol);
-						grid.fillThatCaseForMe(lastRow, lastCol);
-						etat = "PLAYING";
-						statusCO.setText(joueur + " " + etat);
-						Thread t = new Thread(this);
-						t.start();
-					}
-					else if (reponse.equals("COMMAND#ANYWIN")) {
-						if (grid.isThereAnyWinner()) {
-							if (joueur.equals(grid.winner)) {
-								statusCO.setText(joueur + " WINNER" );
-								etat = "DONE";
-								grid.clean();
-								break;
-							}
-							else {
-								statusCO.setText(joueur + " LOOSER");
-								etat = "DONE";
-								grid.clean();
-								break;
-							}
-						}
-						else {
-							System.out.println("No winner");
+	private void startListening(String index) {
+		String reponse1;
+		switch (index) {
+			case "player":
+				//On attend de savoir qui on est
+				while (true) {
+					if (reader.hasNextLine()) {
+						reponse1 = reader.nextLine();
+						System.out.println(reponse1);
+						if (reponse1.equals("COMMAND#P1")) {
+							statusCO.setForeground(Color.RED);
+							joueur = "Joueur 1";
+							statusCO.setText(joueur);
+							break;
+						} else if (reponse1.equals("COMMAND#P2")) {
+							statusCO.setForeground(Color.ORANGE);
+							joueur = "Joueur 2";
+							statusCO.setText(joueur);
+							break;
 						}
 					}
-					else if (reponse.equals("COMMAND#DRAW")) {
-						statusCO.setText(joueur + " " + "DRAW");
-						etat = "DONE";
-						grid.clean();
-						break;
+				}
+				break;
+			case "start":
+				while (true) {
+					if (reader.hasNextLine()) {
+						reponse1 = reader.nextLine();
+						System.out.println(reponse1);
+						if (reponse1.equals("COMMAND#START")) {
+							System.out.println("Start partie");
+							grid = new Grid();
+							grid.joueur = joueur;
+							mainPanel.add(grid, BorderLayout.CENTER);
+							mainPanel.revalidate();
+							break;
+						}
 					}
 				}
-			}
+				break;
+			case "game":
+
+				if (joueur.equals("Joueur 1")) {
+					etat = "PLAYING";
+					grid.etat = etat;
+					statusCO.setText(joueur + " " + etat);
+				} else if (joueur.equals("Joueur 2")) {
+					etat = "WAITING";
+					grid.etat = etat;
+					statusCO.setText(joueur + " " + etat);
+				}
+
+				Thread t = new Thread(this);
+				t.start();
+
+
+				break;
+			case "check":
+				while (true) {
+					if (reader.hasNextLine()) {
+						String reponse = reader.nextLine();
+						if (reponse.contains("COMMAND#PLAYED")) {
+							String split2[] = reponse.split(";");
+							int lastRow = Integer.parseInt(split2[2]);
+							int lastCol = Integer.parseInt(split2[1]);
+							System.out.println("Le joueur a joue: " + lastRow + " " + lastCol);
+							grid.fillThatCaseForMe(lastRow, lastCol);
+							etat = "PLAYING";
+							statusCO.setText(joueur + " " + etat);
+							Thread s = new Thread(this);
+							s.start();
+						} else if (reponse.equals("COMMAND#ANYWIN")) {
+							if (grid.isThereAnyWinner()) {
+								if (joueur.equals(grid.winner)) {
+									statusCO.setText(joueur + " WINNER");
+									etat = "DONE";
+									grid.clean();
+									break;
+								} else {
+									statusCO.setText(joueur + " LOOSER");
+									etat = "DONE";
+									grid.clean();
+									break;
+								}
+							} else {
+								System.out.println("No winner");
+							}
+						} else if (reponse.equals("COMMAND#DRAW")) {
+							statusCO.setText(joueur + " " + "DRAW");
+							etat = "DONE";
+							grid.clean();
+							break;
+						}
+					}
+				}
+				break;
 		}
 	}
 	
-	public void sendToW(String message) throws IOException {
+	private void sendToW(String message) {
 		String full = "COMMAND#" + message;
 		writer.println(full);
 		System.out.println(full + " Envoye");
@@ -225,8 +208,6 @@ public class Client extends JFrame implements Runnable {
 						break;
 					}
 				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}

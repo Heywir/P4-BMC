@@ -2,11 +2,11 @@ package Core;
 
 import javax.swing.JButton;
 
-public class Case {
+class Case {
 	
-	Integer row;
-	Integer col;
-	JButton button;
+	final Integer row;
+	final Integer col;
+	final JButton button;
 	
 	Case(int r, int c, JButton b) {
 		row = r;
