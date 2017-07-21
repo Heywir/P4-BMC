@@ -12,7 +12,6 @@ class Grid extends JPanel implements ActionListener {
 
 	private final ArrayList<Case> listeCases;
 	String joueur;
-	boolean done = false;
 	int lastCol;
 	int lastRow;
 	String etat;

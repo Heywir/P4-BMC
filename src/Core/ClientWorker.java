@@ -1,8 +1,6 @@
 package Core;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Random;
@@ -16,10 +14,6 @@ class ClientWorker implements Runnable {
 	private final Socket sc2;
 	private final ServerUI ui;
 	private int p1;
-	OutputStream wr1;
-	OutputStream wr2;
-	InputStream r1;
-	InputStream r2;
 	private PrintWriter bf1;
 	private PrintWriter bf2;
 	private Scanner br1;
