@@ -1,12 +1,11 @@
 package Core;
 
+import javax.swing.text.BadLocationException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Random;
 import java.util.Scanner;
-
-import javax.swing.text.BadLocationException;
 
 class ClientWorker implements Runnable {
 	
@@ -46,10 +45,10 @@ class ClientWorker implements Runnable {
 			startListening("done");
 			
 			System.out.println("fin d'execution");
-			//stop();
-			
-			
-		} catch (BadLocationException | IOException e) {
+            stop();
+
+
+        } catch (BadLocationException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
