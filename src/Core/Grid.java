@@ -1,46 +1,46 @@
 package Core;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class Grid extends JPanel implements ActionListener {
-	
+
 	int rows;
 	int cols;
 	ArrayList<Case> listeCases;
-	private boolean playing;
-	String joueur;			
+	String joueur;
 	boolean done = false;
 	int lastCol;
 	int lastRow;
 	String etat;
-	
+	String winner;
+	JButton[][] matrice;
+
 	Grid(int r, int c) {
 		//Definition
 		rows = r;
 		cols = c;
 		listeCases = new ArrayList<Case>();
-		
+
 		//Layout
 		GridLayout layout = new GridLayout(rows, cols);
 		this.setLayout(layout);
 		//Options
 		this.setPreferredSize(new Dimension(725, 625));
-		
+
 		//Creation de la grid
-		
+
 		for (int i = 0; i < rows ; i++) {
 			for (int j = 0; j < cols ; j++) {
 				JButton button = new JButton();
+				matrice = new JButton[rows][cols];
+
 				//Premiere ligne qui sert juste a faire tomber les pieces
 				if (i < 1 && j < 7) {
 					button.addActionListener(this);
@@ -57,14 +57,15 @@ public class Grid extends JPanel implements ActionListener {
 				button.setBorder(null);
 				button.setContentAreaFilled(false);
 				this.add(button);
-				
+
 				// On cree une case pour referencer
 				Case ref = new Case(i, j, button);
 				// On lajoute dans une liste
 				listeCases.add(ref);
+				matrice[i][j] = button;
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -77,11 +78,69 @@ public class Grid extends JPanel implements ActionListener {
 				play(cross.col);
 			}
 		}
-		
+
 	}
 
-	private boolean isThereAnyWinner() {
+	public boolean isThereAnyWinner() {
 		// TODO Auto-generated method stub
+		// Vertical bas droite vers gauche
+		for (int i = listeCases.size()-1; i>=0 ; i--) {
+			Case cross = listeCases.get(i);
+			if (cross.row > 0) {
+				//System.out.println("Boutton " + cross.row + " " + cross.col + " " + cross.button.isSelected());
+				if (cross.button.isSelected()) { //Check 1
+					String name = cross.button.getIcon().toString();
+					int s = i - 1;
+					if (s > 0) {
+						Case cross2 = listeCases.get(s);
+						String name2 = cross2.button.getIcon().toString();
+						if (cross2.button.isSelected() && name.contains("caserouge.png") && name2.contains("caserouge.png")) { //Check 2
+							//System.out.println("2 in a row RED");
+							s = i - 2;
+							if (s > 0) {
+								Case cross3 = listeCases.get(s);
+								String name3 = cross3.button.getIcon().toString();
+								if (cross3.button.isSelected() && name.contains("caserouge.png") && name2.contains("caserouge.png") && name3.contains("caserouge.png")) { //Check 3
+									//System.out.println("3 in a row RED");
+									s = i - 3;
+									if (s > 0) {
+										Case cross4 = listeCases.get(s);
+										String name4 = cross4.button.getIcon().toString();
+										if (cross4.button.isSelected() && name.contains("caserouge.png") && name2.contains("caserouge.png") && name3.contains("caserouge.png") && name4.contains("caserouge.png")) { //Check 4
+											//System.out.println("4 in a row RED");
+											winner = "Joueur 1";
+											return true;
+										}
+									}
+								}
+							}
+						}
+						else if (cross2.button.isSelected() && name.contains("casejaune.png") && name2.contains("casejaune.png")) { //Check 2
+							//System.out.println("2 in a row YELLOW");
+							s = i - 2;
+							if (s > 0) {
+								Case cross3 = listeCases.get(s);
+								String name3 = cross3.button.getIcon().toString();
+								if (cross3.button.isSelected() && name.contains("casejaune.png") && name2.contains("casejaune.png") && name3.contains("casejaune.png")) { //Check 3
+									//System.out.println("3 in a row YELLOW");
+									s = i - 3;
+									if (s > 0) {
+										Case cross4 = listeCases.get(s);
+										String name4 = cross4.button.getIcon().toString();
+										if (cross4.button.isSelected() && name.contains("casejaune.png") && name2.contains("casejaune.png") && name3.contains("casejaune.png") && name4.contains("casejaune.png")) { //Check 4
+											//System.out.println("4 in a row RED");
+											winner = "Joueur 2";
+											return true;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		return false;
 	}
 
@@ -144,12 +203,8 @@ public class Grid extends JPanel implements ActionListener {
 		
 	}
 
-	public boolean isPlaying() {
-		return playing;
-	}
-
-	public void setPlaying(boolean playing) {
-		this.playing = playing;
+	public void clean() {
+		listeCases.clear();
 	}
 
 }

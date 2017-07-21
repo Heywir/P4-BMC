@@ -25,6 +25,10 @@ public class ClientWorker implements Runnable {
 	PrintWriter bf2;
 	Scanner br1;
 	Scanner br2;
+	String joueurSC1;
+	String joueurSC2;
+	int lastRow;
+	int lastCol;
 	
 	public ClientWorker(Socket s1, Socket s2, ServerUI u) {
 		sc1 = s1;
@@ -41,7 +45,7 @@ public class ClientWorker implements Runnable {
 			ui.addText("Worker: Creation Reussite");
 			//Ordre de jeu
 			randomizePlayers();
-			//On ecoute pour savoir si les clients sont prêtes
+			//On ecoute pour savoir si les clients sont prï¿½tes
 			startListening("ready");
 			
 			//Debut de partie
@@ -75,14 +79,19 @@ public class ClientWorker implements Runnable {
 		ui.addText("Worker: Randomisation des joueurs");
 		Random random = new Random();
 		p1 = random.nextInt(2);
+		p1 = 1;
 		if (p1 == 0) {
 			p2 = 1;
+			joueurSC1 = "Joueur 1";
+			joueurSC2 = "Joueur 2";
 			ui.addText("Worker: Joueur 1: " + p1 + "  Joueur 2: " + p2);
 			sendToSC1("P1");
 			sendToSC2("P2");
 		}
 		else {
 			p2 = 0;
+			joueurSC1 = "Joueur 2";
+			joueurSC2 = "Joueur 1";
 			ui.addText("Worker: Joueur 1: " + p1 + "  Joueur 2: " + p2);
 			sendToSC1("P2");
 			sendToSC2("P1");
@@ -124,13 +133,49 @@ public class ClientWorker implements Runnable {
 			}
 		}
 		else if (index.equals("done")) {
-			//Ecoute pour savoir si pret
-			String reponse1 = null;
-			String reponse2 = null;
-			reponse1 = br1.nextLine();
-			ui.addText("Worker: Received from Socket 1: " + reponse1);
-			reponse2 = br2.nextLine();
-			ui.addText("Worker: Received from Socket 2: " + reponse2);
+			int tour = 1;
+			while (tour <= 42) {
+				if (joueurSC1.equals("Joueur 1")) {
+					String reponse1;
+					if (br1.hasNextLine()) {
+						reponse1 = br1.nextLine();
+						ui.addText("Worker: Received from Socket 1: " + reponse1);
+						System.out.println(reponse1);
+						if (reponse1.contains("COMMAND#DONE")) {
+							String split1[] = reponse1.split(";");
+							lastRow = Integer.parseInt(split1[2]);
+							lastCol = Integer.parseInt(split1[1]);
+							System.out.println("Le joueur a joue: " + lastRow + " " + lastCol);
+							sendToSC2("PLAYED;" + lastRow + ";" + lastCol);
+							sendToBoth("ANYWIN");
+							joueurSC1 = "Joueur 2";
+							joueurSC2 = "Joueur 1";
+							tour++;
+
+						}
+					}
+				}
+				else if (joueurSC1.equals("Joueur 2")) {
+					String reponse2;
+					if (br2.hasNextLine()) {
+						reponse2 = br2.nextLine();
+						ui.addText("Worker: Received from Socket 2: " + reponse2);
+						System.out.println(reponse2);
+						if (reponse2.contains("COMMAND#DONE")) {
+							String split2[] = reponse2.split(";");
+							lastRow = Integer.parseInt(split2[2]);
+							lastCol = Integer.parseInt(split2[1]);
+							System.out.println("Le joueur a joue: " + lastRow + " " + lastCol);
+							sendToSC1("PLAYED;" + lastRow + ";" + lastCol);
+							sendToBoth("ANYWIN");
+							joueurSC1 = "Joueur 1";
+							joueurSC2 = "Joueur 2";
+							tour++;
+						}
+					}
+				}
+			}
+			sendToBoth("DRAW");
 		}
 	}
 	
