@@ -51,6 +51,7 @@ class ClientWorker implements Runnable {
         } catch (BadLocationException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			stop();
 		}
 	}
 	
@@ -99,7 +100,7 @@ class ClientWorker implements Runnable {
 		bf2.println("COMMAND#" + message);
 		
 	}
-	
+
 	private void startListening(String index) throws BadLocationException {
 		if (index.equals("ready")) {
 			//Ecoute pour savoir si pret
@@ -114,11 +115,13 @@ class ClientWorker implements Runnable {
 			}
 		}
 		else if (index.equals("done")) {
+
 			int tour = 1;
 			while (tour <= 42) {
 				int lastCol;
 				int lastRow;
 				if (joueurSC1.equals("Joueur 1")) {
+
 					String reponse1;
 					if (br1.hasNextLine()) {
 						reponse1 = br1.nextLine();
@@ -135,10 +138,21 @@ class ClientWorker implements Runnable {
 							joueurSC2 = "Joueur 1";
 							tour++;
 
+						} else if (reponse1.equals("COMMAND#AGAIN")) {
+							while (br2.hasNextLine()) {
+								String reponse2 = br2.nextLine();
+								ui.addText("Worker: Received from Socket 2: " + reponse2);
+								if (reponse2.equals("COMMAND#AGAIN")) {
+									newGame();
+								}
+							}
+						} else if (reponse1.equals("COMMAND#IGIVEUP")) {
+							sendToSC2("STOP");
 						}
 					}
 				}
 				else if (joueurSC1.equals("Joueur 2")) {
+
 					String reponse2;
 					if (br2.hasNextLine()) {
 						reponse2 = br2.nextLine();
@@ -154,12 +168,98 @@ class ClientWorker implements Runnable {
 							joueurSC1 = "Joueur 1";
 							joueurSC2 = "Joueur 2";
 							tour++;
+						} else if (reponse2.equals("COMMAND#AGAIN")) {
+							while (br1.hasNextLine()) {
+								String reponse1 = br1.nextLine();
+								ui.addText("Worker: Received from Socket 1: " + reponse1);
+								if (reponse1.equals("COMMAND#AGAIN")) {
+									newGame();
+								}
+							}
+						} else if (reponse2.equals("COMMAND#IGIVEUP")) {
+							sendToSC1("STOP");
 						}
 					}
 				}
 			}
 			sendToBoth("DRAW");
 		}
+	}
+
+	private void newGame() throws BadLocationException {
+		if (joueurSC1.equals("Joueur 1")) {
+			joueurSC1 = "Joueur 2";
+			joueurSC2 = "Joueur 1";
+			System.out.println("Je suis la");
+		} else {
+			joueurSC1 = "Joueur 1";
+			joueurSC2 = "Joueur 2";
+			System.out.println("Je suis la");
+		}
+		int tour = 1;
+		while (tour <= 42) {
+			if (joueurSC1.equals("Joueur 1")) {
+
+				String reponse1;
+				if (br1.hasNextLine()) {
+					reponse1 = br1.nextLine();
+					ui.addText("Worker: Received from Socket 1: " + reponse1);
+					System.out.println(reponse1);
+					if (reponse1.contains("COMMAND#DONE")) {
+						String split1[] = reponse1.split(";");
+						int lastRow = Integer.parseInt(split1[2]);
+						int lastCol = Integer.parseInt(split1[1]);
+						System.out.println("Le joueur a joue: " + lastRow + " " + lastCol);
+						sendToSC2("PLAYED;" + lastRow + ";" + lastCol);
+						sendToBoth("ANYWIN");
+						joueurSC1 = "Joueur 2";
+						joueurSC2 = "Joueur 1";
+						tour++;
+
+					} else if (reponse1.equals("COMMAND#AGAIN")) {
+						while (br2.hasNextLine()) {
+							String reponse2 = br2.nextLine();
+							ui.addText("Worker: Received from Socket 2: " + reponse2);
+							if (reponse2.equals("COMMAND#AGAIN")) {
+								newGame();
+							}
+						}
+					} else if (reponse1.equals("COMMAND#IGIVEUP")) {
+						sendToSC2("STOP");
+					}
+				}
+			} else if (joueurSC1.equals("Joueur 2")) {
+
+				String reponse2;
+				if (br2.hasNextLine()) {
+					reponse2 = br2.nextLine();
+					ui.addText("Worker: Received from Socket 2: " + reponse2);
+					System.out.println(reponse2);
+					if (reponse2.contains("COMMAND#DONE")) {
+						String split2[] = reponse2.split(";");
+						int lastRow = Integer.parseInt(split2[2]);
+						int lastCol = Integer.parseInt(split2[1]);
+						System.out.println("Le joueur a joue: " + lastRow + " " + lastCol);
+						sendToSC1("PLAYED;" + lastRow + ";" + lastCol);
+						sendToBoth("ANYWIN");
+						joueurSC1 = "Joueur 1";
+						joueurSC2 = "Joueur 2";
+						tour++;
+					} else if (reponse2.equals("COMMAND#AGAIN")) {
+						while (br1.hasNextLine()) {
+							String reponse1 = br1.nextLine();
+							ui.addText("Worker: Received from Socket 1: " + reponse1);
+							if (reponse1.equals("COMMAND#AGAIN")) {
+								newGame();
+							}
+						}
+					} else if (reponse2.equals("COMMAND#IGIVEUP")) {
+						sendToSC1("STOP");
+					}
+				}
+			}
+		}
+
 	}
 	
 	private void play() throws BadLocationException {
@@ -172,8 +272,11 @@ class ClientWorker implements Runnable {
 			sendToSC1("WAIT");
 		}
 	}
-	
-	public void stop() {
+
+	private void stop() {
+		joueurSC1 = null;
+		joueurSC2 = null;
+		ui.close();
 		bf1.close();
 		bf2.close();
 		br1.close();

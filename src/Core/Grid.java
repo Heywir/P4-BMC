@@ -1,16 +1,17 @@
 package Core;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import javax.swing.*;
-
 class Grid extends JPanel implements ActionListener {
 
 	private final ArrayList<Case> listeCases;
+	private final ImageIcon caseRouge;
+	private final ImageIcon caseJaune;
 	String joueur;
 	int lastCol;
 	int lastRow;
@@ -18,6 +19,14 @@ class Grid extends JPanel implements ActionListener {
 	String winner;
 
 	Grid() {
+
+		// Composants
+		ImageIcon firstRow = new ImageIcon(getClass().getResource("/firstrow.png"));
+		ImageIcon firstRowPressed = new ImageIcon(getClass().getResource("/firstrowpressed.png"));
+		ImageIcon caseVide = new ImageIcon(getClass().getResource("/casevide.png"));
+		caseRouge = new ImageIcon(getClass().getResource("/caserouge.png"));
+		caseJaune = new ImageIcon(getClass().getResource("/casejaune.png"));
+
 		//Definition
 		int rows = 7;
 		int cols = 7;
@@ -38,15 +47,12 @@ class Grid extends JPanel implements ActionListener {
 				//Premiere ligne qui sert juste a faire tomber les pieces
 				if (i < 1 && j < 7) {
 					button.addActionListener(this);
-					ImageIcon nonClicked = new ImageIcon(getClass().getResource("/firstrow.png"));
-					ImageIcon clicked = new ImageIcon(getClass().getResource("/firstrowpressed.png"));
-					button.setIcon(nonClicked);
-					button.setPressedIcon(clicked);
+					button.setIcon(firstRow);
+					button.setPressedIcon(firstRowPressed);
 				}
 				else {
 					button.setSelected(false);
-					ImageIcon nonClicked = new ImageIcon(getClass().getResource("/casevide.png"));
-					button.setIcon(nonClicked);
+					button.setIcon(caseVide);
 				}
 				button.setBorder(null);
 				button.setContentAreaFilled(false);
@@ -194,14 +200,12 @@ class Grid extends JPanel implements ActionListener {
 			if (cross.col == c && cross.row == r){
 				//Si c'est le joueur qui joue
 				if (joueur.equals("Joueur 1") && etat.equals("PLAYING")) {
-					ImageIcon red = new ImageIcon(getClass().getResource("/caserouge.png"));
-					cross.button.setIcon(red);
+					cross.button.setIcon(caseRouge);
 					cross.button.setSelected(true);
 					etat = "WAITING";
 				}
 				else if (joueur.equals("Joueur 2") && etat.equals("PLAYING")) {
-					ImageIcon yellow = new ImageIcon(getClass().getResource("/casejaune.png"));
-					cross.button.setIcon(yellow);
+					cross.button.setIcon(caseJaune);
 					cross.button.setSelected(true);
 					etat = "WAITING";
 				}
